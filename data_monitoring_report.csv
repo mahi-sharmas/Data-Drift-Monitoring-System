@@ -1,0 +1,12 @@
+feature,missing_spike,range_issue,p_value,drift_detected,status
+SeriousDlqin2yrs,True,False,1.0,False,⚠ Issue
+RevolvingUtilizationOfUnsecuredLines,True,False,0.9999999999999992,False,⚠ Issue
+age,True,True,7.978084212901798e-31,True,⚠ Issue
+NumberOfTime30-59DaysPastDueNotWorse,False,False,1.0,False,✅ Stable
+DebtRatio,False,False,1.0,False,✅ Stable
+MonthlyIncome,False,True,0.0,True,⚠ Issue
+NumberOfOpenCreditLinesAndLoans,False,False,1.0,False,✅ Stable
+NumberOfTimes90DaysLate,False,False,1.0,False,✅ Stable
+NumberRealEstateLoansOrLines,False,False,1.0,False,✅ Stable
+NumberOfTime60-89DaysPastDueNotWorse,False,False,1.0,False,✅ Stable
+NumberOfDependents,False,False,1.0,False,✅ Stable
