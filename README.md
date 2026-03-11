@@ -1,36 +1,67 @@
 # Data Drift & Quality Monitoring System
 
-A Python-based system to monitor data quality and detect data drift in incoming datasets, ensuring reliable analytics and machine learning pipelines. Designed for real-world production scenarios like fintech, e-commerce, and health tech.
+A production-style data monitoring pipeline that detects distribution drift, data quality issues, and generates reliability scores for ML systems. Built to simulate real-world MLOps workflows where models degrade silently due to upstream data changes.
 
-## Features
+## Problem Statement
 
-- **Data Validation Checks**  
-  - Detects missing value spikes, schema mismatches, out-of-range values.
-- **Data Drift Detection**  
-  - Uses Kolmogorov–Smirnov (KS) test for numerical features and Chi-Square test for categorical features.
-- **Data Reliability Score**  
-  - Computes an overall score for dataset health and flags columns that may break downstream analytics or ML models.
-- **Interactive Dashboard (Streamlit)**  
-  - Upload baseline & incoming datasets, view drift plots, and export monitoring reports.
+Machine learning models in production often fail not because of code bugs, but because the input data changes over time — a phenomenon known as **data drift**. This project builds an automated monitoring system that compares incoming data against a stored baseline profile and flags anomalies before they impact model performance.
+
+## Dataset
+
+- **Source:** Kaggle — Give Me Some Credit (credit risk dataset)
+- **Baseline Size:** 150,000 records, 11 features
+- **Features:** `RevolvingUtilizationOfUnsecuredLines`, `age`, `DebtRatio`, `MonthlyIncome`, `NumberOfTimes90DaysLate`, and 6 others
+- **Simulated Drift:** Missing value injection (10%), income distribution scaling (1.5x), impossible age values (150)
+
+## Approach
+
+1. **Baseline Profiling** — Computed and stored per-feature statistics (mean, std, min, max, missing %) as a JSON reference profile
+2. **Data Quality Checks** — Compared incoming data against baseline for missing value spikes (>5% increase) and out-of-range values
+3. **Statistical Drift Detection** — Applied the Kolmogorov-Smirnov (KS) two-sample test per feature with p < 0.05 threshold
+4. **Reliability Scoring** — Composite score (0–100) penalizing quality issues (-5 each) and drift detections (-10 each)
+5. **Streamlit Dashboard** — Interactive web app for uploading baseline/today CSVs, viewing reports, and visualizing drift via KDE plots
+
+## Key Results
+
+| Check Type | Flagged Features | Details |
+|---|---|---|
+| Missing Value Spike | 3 / 11 | `SeriousDlqin2yrs`, `RevolvingUtilization`, `age` |
+| Range Violation | 2 / 11 | `age` (max 150 vs baseline 109), `MonthlyIncome` (scaled 1.5x) |
+| KS Drift Detected | 2 / 11 | `MonthlyIncome` (p ≈ 0), `age` (p ≈ 8e-31) |
+| **Reliability Score** | **55 / 100** | Verdict: Data NOT reliable for ML or decision-making |
+
+## Tech Stack
+
+- **Language:** Python
+- **Libraries:** Pandas, NumPy, SciPy (KS test), Seaborn, Matplotlib
+- **Dashboard:** Streamlit
+- **Concepts:** Data drift detection, statistical testing, MLOps monitoring, data quality assurance
+
+## Project Structure
+
+```
+├── Data_Drift_Monitoring_System.ipynb   # Full analysis notebook
+├── app.py                               # Streamlit dashboard
+├── baseline_profile.json                # Stored baseline statistics
+├── data_monitoring_report.csv           # Final feature-level report
+├── cs-training.csv                      # Baseline dataset
+├── cs-test.csv                          # Test dataset
+└── README.md
+```
 
 ## How to Run
 
-1. Install dependencies:
-
 ```bash
+# Run the notebook
+jupyter notebook Data_Drift_Monitoring_System.ipynb
 
-pip install pandas numpy scipy matplotlib seaborn streamlit
-
-
-Run the Streamlit dashboard:
+# Launch the Streamlit dashboard
+pip install streamlit scipy seaborn
 streamlit run app.py
+```
 
+## Author
 
-Files in this Repository
-
-Data_Drift_Monitoring_System.ipynb → Jupyter/Colab notebook with full analysis
-app.py → Streamlit dashboard
-cs-training.csv → Baseline dataset
-today_data.csv → Example incoming dataset
-baseline_profile.json → Precomputed baseline statistics
-data_monitoring_report.csv → Sample monitoring report
+**Mahi Sharma**
+B.Tech CSE (Data Science) — Manipal University Jaipur
+[GitHub](https://github.com/mahi-sharmas)
